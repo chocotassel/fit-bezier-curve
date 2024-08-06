@@ -14,12 +14,12 @@
     <script>
         var canvas = document.getElementById('canvas');
         var ctx = canvas.getContext('2d');
-        var origin = {x: 300, y: 300, s: 200};
+        var origin = {x: 100, y: 500, s: 1000};
 
-        function draw(x, y, color, ps = 1) {
+        function draw(x, y, color, ps = 2) {
             ctx.fillStyle = color;
             ctx.beginPath();
-            ctx.arc(x * origin.s + origin.x, origin.y - y * origin.s, ps, 0, Math.PI * 2, true);
+            ctx.arc(x * origin.s + origin.x, origin.y - y * origin.s, ps *  2, 0, Math.PI * 2, true);
             ctx.fill();
         }
         function drawLine(x1, y1, x2, y2, color, ps = 1) {
@@ -127,11 +127,13 @@
     <script src="./bezierPath.js" type="module"></script>
 
 
-    <script src="./convert.js" type="module"></script>
-    <!-- <script src="./convert2.js" type="module"></script> -->
-    <script src="./convert3.js" type="module"></script>
+    <!-- <script src="./convert.js" type="module"></script> -->
     <!-- <script src="./convert-back.js" type="module"></script> -->
-    <!-- <script src="./convert-back2.js" type="module"></script> -->
+    <script src="./convertCurve.js" type="module"></script>
+    <!-- <script src="./convertCurve-back.js" type="module"></script> -->
+
+    <!-- <script src="./lottie.js" type="module"></script> -->
+    <!-- <script src="./convert-back.js" type="module"></script> -->
 
 
 

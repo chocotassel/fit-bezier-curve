@@ -1,8 +1,8 @@
 import { getBezierValue } from './predy.js'
 
-const MaxIterations = 10
+const MaxIterations = 20
 
-export function fineTurning(points, bezier, err) {
+export function fineTurning(bezier, err, points) {
     let p0 = bezier[0]
     let p1 = bezier[1]
     let p2 = bezier[2]
@@ -124,4 +124,132 @@ function vecAdd(v1, v2) {
 
 function vecSub(v1, v2) {
     return [v1[0] - v2[0], v1[1] - v2[1]]
+}
+
+
+
+// // 数值求导，使用有限差分法
+// function numericalDerivative(f, x, h = 1e-3) {
+//     return (f(x + h) - f(x - h)) / (2 * h);
+// }
+
+// // 牛顿迭代法，找到切点
+// function findTangentPoint(f, x0, y0, initialGuess, tolerance = 1e-5, maxIterations = 100) {
+//     let x1 = initialGuess;
+//     for (let i = 0; i < maxIterations; i++) {
+//         let y1 = f(x1);
+//         let slope = numericalDerivative(f, x1);
+//         let normalSlope = -1 / slope;
+        
+//         // 更新切点的x坐标
+//         let xNew = (normalSlope * x1 - y1 + y0 + x0 / normalSlope) / (normalSlope + 1 / normalSlope);
+        
+//         console.log(y1, xNew);
+//         if (Math.abs(xNew - x1) < tolerance) {
+//             return { x: x1, y: y1 };
+//         }
+        
+//         x1 = xNew;
+//     }
+//     throw new Error("找不到切点，迭代未收敛");
+// }
+
+// // 计算切点的坐标
+// export function calculateTangentPointCoordinates(f, p, initialGuess) {
+//     let tangentPoint = findTangentPoint(f, p[0], p[1], initialGuess);
+//     return tangentPoint;
+// }
+
+
+export function ft (bezier, f, mf, precision, segment = 100) {
+    let p0 = bezier[0]
+    let p1 = bezier[1]
+    let p2 = bezier[2]
+    let p3 = bezier[3]
+
+    const start = p0[0]
+    const end = p3[0]
+    const step = (end - start) / segment
+    let cycle = 0
+
+    function createLut (f) {
+        let lut = []
+        let length = 0
+    
+        let lastP = []
+    
+        let t = start
+        do {
+            const y = f(t)
+    
+            if (lastP.length) {
+                const dy = y - lastP[1]
+                length += Math.hypot(dy, step)
+            }
+            lut.push([length, [t, y]])
+            lastP = [t, y]
+            t += step
+            t = t > end && t < end + step ? end : t
+        } while (t <= end)
+        lut.forEach(l => l[0] /= length)
+    
+        return { lut, length }
+    }
+    
+    const { lut: lut2, length: length2 } = createLut(mf)
+
+    do {
+        const tempf = t => f(t, [...p0, ...p3], [...p1, ...p2], { range: [0, 1, 0, 1], segIndex: 0, y: 0 }).y
+        const { lut: lut1, length: length1} = createLut(tempf)
+        
+    
+        const vec1 = [0, 0]
+        const vec2 = [0, 0]
+        const step2 = 10 / segment
+        let sumOfSquares = 0;
+        let i = 0
+        do {
+            const p1 = findClosestPoint(i, lut1)
+            const p2 = findClosestPoint(i, lut2)
+            const w1 = 3 * i * (1 - i) ** 2
+            const w2 = 3 * (1 - i) * i ** 2
+            vec1[0] += (p2[0] - p1[0]) * w1 * step2 * 2
+            vec1[1] += (p2[1] - p1[1]) * w1 * step2 * 2
+            vec2[0] += (p2[0] - p1[0]) * w2 * step2 * 2
+            vec2[1] += (p2[1] - p1[1]) * w2 * step2 * 2
+
+            const diff = Math.hypot(p1[0] - p2[0], p1[1] - p2[1])
+            sumOfSquares += diff * diff
+            i += step2
+            i = i > end && i < end + step2 ? end : i
+        } while (i <= 1)
+        
+        // console.log('vec', vec1, vec2, length1, length2);
+
+        let meanSquareError = sumOfSquares * step2;
+        let rmse = Math.sqrt(meanSquareError);
+        console.log('vec err', rmse);
+        if (rmse < precision / 2) break
+    
+        p1[0] += vec1[0]
+        p1[1] += vec1[1]
+        p2[0] += vec2[0]
+        p2[1] += vec2[1]
+
+        cycle++
+    } while (cycle < 15)
+
+}
+
+function findClosestPoint(p, lut) {
+    let min = Number.MAX_VALUE
+    let index = 0
+    lut.forEach((l, i) => {
+        const d = Math.abs(l[0] - p)
+        if (d < min) {
+            min = d
+            index = i
+        }
+    })
+    return lut[index][1]
 }

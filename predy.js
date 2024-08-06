@@ -19,23 +19,12 @@ function mapPercent (num, min, max) {
 
 export function getBezierValue (time, pts, cps, options) {
     const segCount = pts.length / 2 - 1;
-    const range = options.range;
-    let xmin = 0;
-    let xmax = 1;
-    let yRange = false;
     let ymin = 0;
     let ymax = 1;
   
     let out = {}
 
-    if (range) {
-        yRange = true;
-        xmin = range[0];
-        xmax = range[1];
-        ymin = range[2];
-        ymax = range[3];
-    }
-    const x = clamp((time - xmin) / (xmax - xmin), 0, 1);
+    const x = time
   
     for (let i = 0, xIndex = 0; i < segCount; i++, xIndex += 2) {
         const t0 = pts[xIndex];

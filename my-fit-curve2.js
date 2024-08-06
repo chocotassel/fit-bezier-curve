@@ -83,7 +83,7 @@ function fitCubic(type, points, leftTangent, rightTangent, error, maxNum, ts, re
     //Parameterize points, and attempt to fit curve
     u = chordLengthParameterize(points, type);
     [bezCurve, maxError, splitPoint] = generateAndReport(points, u, u, leftTangent, rightTangent, ts, progressCallback)
-    console.log('maxError', maxError, bezCurve, points);
+    // console.log('maxError', maxError, bezCurve, points);
 
     if ((maxError === 0) || (maxError < error)) {
         return [bezCurve];
@@ -366,7 +366,7 @@ function chordLengthParameterize(points, type) {
       let prevP
   
       points.forEach((p, i) => {
-        currU = i ? prevU + maths.vectorLen(subtract(p, prevP))
+        currU = i ? prevU + maths.vectorLen(maths.subtract(p, prevP))
           : 0
         u.push(currU)
   

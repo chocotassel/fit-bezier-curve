@@ -1,12 +1,7 @@
-import { fitCurve } from './fit-curve.js';
-import { fitCurve as fitCurve2 } from './fit-curve2.js';
-import { getBezierValue, getValue } from './predy.js';
-import { calculateAngle, convertBezier, deCasteljauSplit, myGetBezierValue, myGetValue, vecLength, percentSplit, findClosestPoint, vecSub } from './convert.js'
-import { bezierPath } from './bezierPath.js'
-import { convertedBezierPath, cutBezierPath } from './convert3.js'
+import { calculateAngle } from './utils.js'
+import { convertedBezierPath, cutBezierPath } from './convert.js'
 
 const seg = 20;
-
 
 // convert
 function convertBezierTolottie (bezierPath, segment = seg) {
@@ -54,88 +49,7 @@ function convertBezierTolottie (bezierPath, segment = seg) {
                 bezierPath[4]
             ]
         }
-        // const pStart = [slicedBezierPath[0][0], slicedBezierPath[0][1]];
-        // const pEnd = [slicedBezierPath[0][slicedBezierPath[0].length - 2], slicedBezierPath[0][slicedBezierPath[0].length - 1]];
 
-        // const fc = []
-        // const fc3d = []
-        // const options = {
-        //     range: [0, 1, 0, 1],
-        //     segIndex: 0,
-        //     y: 0
-        // };
-        // let lastP = [];
-        // let bezier3dLength = 0;
-        // for (let t = pStart[0]; t <= pEnd[0]; t += step) {
-        //     t = parseFloat(t.toFixed(6))
-        //     const { y, out } = getValue(t, slicedBezierPath, options);
-        //     fc.push([t, y]);
-        //     fc3d.push(out);
-        //     if (lastP.length) {
-        //         bezier3dLength += vecLength(vecSub(out, lastP))
-        //     }
-        //     lastP = out;
-        // }
-    
-        // // fit
-        // let seg_num = 1
-        // let bc3d
-        // let cycle = 0
-        // do {
-        //     bc3d = fitCurve2(fc3d, 0.0001, seg_num++)
-        //     const bpTemp = convertBezier(bc3d)
-        //     const op = {
-        //         range: [0, 1, 0, 1],
-        //         segIndex: 0,
-        //         y: 0,
-        //     }
-            
-        //     // calculate error
-        //     let sumOfSquares = 0;
-        //     fc3d.forEach((p, i) => {
-        //         const { out } = myGetValue(fc[i][0], [slicedBezierPath[0], slicedBezierPath[1], bpTemp[0], bpTemp[1], slicedBezierPath[4]], op)
-        //         const diff = vecLength(vecSub(out, p))
-        //         sumOfSquares += diff * diff
-        //     })
-        //     let meanSquareError = sumOfSquares / fc3d.length;
-        //     let rmse = Math.sqrt(meanSquareError);
-        //     console.log('r', rmse);
-        //     if (rmse / bezier3dLength < MAX_ERROR_3D) break
-        //     cycle++
-        // } while (bc3d.length < slicedBezierPath[0].length / 2 - 1 && cycle < 5)
-
-        // const bp3d = convertBezier(bc3d)
-
-        // // split 2d
-        // const tv = []
-        // for (let j = 1; j < bc3d.length; j++) {
-        //     const p = bc3d[j][0]
-        //     const index = findClosestPoint(p, fc3d)
-        //     tv.push(fc[index][0])
-        // }
-
-        // const bc = fitCurve2(fc, 0.000001, 1)
-        // const bp = convertBezier(bc)
-        // const [pts, cps] = tv.length ? percentSplit(bp[0], bp[1], tv) : [bp[0], bp[1]];
-
-        // if (n !== 0) {
-        //     pts.splice(0, 2);
-        //     bp3d[0].splice(0,3);
-        // }
-        // result[0].push(...pts);
-        // result[1].push(...cps);
-        // result[2].push(...bp3d[0]);
-        // result[3].push(...bp3d[1]);
-
-
-        // bp test
-        // for (let t = 0; t < 1; t += step) {
-        //     const out = myGetBezierValue(t, bp[0], bp[1], options);
-        //     const y = out.y;
-        //     draw(t+0.1, y, 'green', 1);
-        // }
-
-        
         const bp = cutBezierPath(slicedBezierPath, 2, segment)
 
         // result
